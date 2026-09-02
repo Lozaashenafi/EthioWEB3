@@ -1,0 +1,6 @@
+{
+  "name": "EthioWeb3 - African Web3 Community & Campaign Platform",
+  "description": "Connecting international Web3 projects with Ethiopian and African creators, communities, and campaigns with verified social analytics and leaderboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-canvas: #0D1117;
+  --color-canvas-card: #161B22;
+  --color-canvas-card-hover: #1F242C;
+  --color-glass-border: #30363D;
+  --color-glass-border-hover: #484F58;
+  
+  --color-emerald-accent: #10B981;
+  --color-mint-bright: #34D399;
+  --color-forest-deep: #0D1117;
+
+  --color-earth: #FFFFFF;
+  --color-earth-dark: #0D1117;
+  --color-earth-muted: #94A3B8;
+  --color-earth-subtle: #64748B;
+  --color-sage: #10B981;
+  --color-sage-hover: #059669;
+  --color-moss: #34D399;
+  --color-clay: #D97706;
+  --color-border-natural: #30363D;
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Light & Dark Base Themes */
+html.dark body, body:not(.light) {
+  background-color: #0D1117;
+  color: #F0F6FC;
+}
+
+html.light body {
+  background-color: #F6F8FA;
+  color: #0F172A;
+}
+
+/* Solid, High-Contrast Surface Utilities (No Glassmorphism, No Glows) */
+.glass-card {
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  border-radius: 12px;
+}
+
+html.dark .glass-card, :not(.light) .glass-card {
+  background-color: #161B22;
+  border: 1px solid #30363D;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+html.light .glass-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.glass-card-hover {
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+html.dark .glass-card-hover:hover, :not(.light) .glass-card-hover:hover {
+  background-color: #1C2128;
+  border-color: #484F58;
+}
+
+html.light .glass-card-hover:hover {
+  background-color: #FFFFFF;
+  border-color: #CBD5E1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
+}
+
+.glass-pill {
+  border-radius: 9999px;
+}
+
+html.dark .glass-pill, :not(.light) .glass-pill {
+  background-color: #21262D;
+  border: 1px solid #30363D;
+  color: #E6EDF3;
+}
+
+html.light .glass-pill {
+  background-color: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  color: #334155;
+}
+
+.glass-input {
+  border-radius: 8px;
+  transition: border-color 0.15s ease;
+}
+
+html.dark .glass-input, :not(.light) .glass-input {
+  background-color: #0D1117;
+  border: 1px solid #30363D;
+  color: #F0F6FC;
+}
+
+html.dark .glass-input:focus, :not(.light) .glass-input:focus {
+  outline: none;
+  border-color: #10B981;
+}
+
+html.light .glass-input {
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: #0F172A;
+}
+
+html.light .glass-input:focus {
+  outline: none;
+  border-color: #059669;
+}
+
+/* Light Mode Global Text & Container Mappings */
+html.light {
+  color-scheme: light;
+}
+
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6 {
+  color: #0F172A;
+}
+
+html.light .bg-white\/\[0\.02\],
+html.light .bg-white\/\[0\.03\],
+html.light .bg-white\/\[0\.04\],
+html.light .bg-white\/\[0\.05\],
+html.light .bg-white\/\[0\.06\],
+html.light .bg-white\/\[0\.08\],
+html.light .bg-white\/5,
+html.light .bg-white\/10 {
+  background-color: #FFFFFF;
+  border-color: #E2E8F0;
+}
+
+html.light .border-white\/10,
+html.light .border-white\/15,
+html.light .border-white\/20,
+html.light .border-white\/25 {
+  border-color: #E2E8F0;
+}
+
+html.light .text-white {
+  color: #0F172A;
+}
+
+html.light .text-white\/90 {
+  color: #1E293B;
+}
+
+html.light .text-white\/80 {
+  color: #334155;
+}
+
+html.light .text-white\/75,
+html.light .text-white\/70 {
+  color: #475569;
+}
+
+html.light .text-white\/65,
+html.light .text-white\/60 {
+  color: #64748B;
+}
+
+html.light .text-white\/50,
+html.light .text-white\/40 {
+  color: #64748B;
+}
+
+html.light .bg-\[\#090F0C\],
+html.light .bg-\[\#070D0A\],
+html.light .bg-\[\#0D1612\],
+html.light .bg-\[\#0D1713\],
+html.light .bg-\[\#0D1117\] {
+  background-color: #FFFFFF;
+}
+
+html.dark .bg-\[\#090F0C\],
+html.dark .bg-\[\#070D0A\],
+html.dark .bg-\[\#0D1612\],
+html.dark .bg-\[\#0D1713\] {
+  background-color: #161B22;
+}
