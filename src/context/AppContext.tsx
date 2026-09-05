@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import {
   User,
   CreatorProfile,
@@ -29,25 +29,26 @@ interface AppContextType {
   activeCreatorProfile: CreatorProfile | undefined;
   activeProjectProfile: Project | undefined;
   theme: 'dark' | 'light';
+  isReady: boolean;
   toggleTheme: () => void;
   setTheme: (theme: 'dark' | 'light') => void;
   
   // Actions
   switchUser: (userId: string | null) => void;
-  login: (email: string) => User;
-  register: (name: string, email: string, category: User['category'], role?: User['role']) => User;
+  login: (email: string) => Promise<User>;
+  register: (name: string, email: string, category: User['category'], role?: User['role']) => Promise<User>;
   logout: () => void;
-  applyAsCreator: (data: Omit<CreatorProfile, 'id' | 'status' | 'appliedAt'>) => CreatorProfile;
-  updateCreatorStatus: (creatorId: string, status: CreatorStatus, notes?: string) => void;
-  applyAsProject: (data: Omit<Project, 'id' | 'status' | 'appliedAt'>) => Project;
-  updateProjectStatus: (projectId: string, status: ProjectStatus) => void;
-  createCampaign: (data: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt' | 'status'> & { status?: CampaignStatus }) => Campaign;
-  updateCampaignStatus: (campaignId: string, status: CampaignStatus) => void;
-  joinCampaign: (campaignId: string, creator: CreatorProfile) => CampaignParticipant;
+  applyAsCreator: (data: Omit<CreatorProfile, 'id' | 'status' | 'appliedAt'>) => Promise<CreatorProfile>;
+  updateCreatorStatus: (creatorId: string, status: CreatorStatus, notes?: string) => Promise<void>;
+  applyAsProject: (data: Omit<Project, 'id' | 'status' | 'appliedAt'>) => Promise<Project>;
+  updateProjectStatus: (projectId: string, status: ProjectStatus) => Promise<void>;
+  createCampaign: (data: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt' | 'status'> & { status?: CampaignStatus }) => Promise<Campaign>;
+  updateCampaignStatus: (campaignId: string, status: CampaignStatus) => Promise<void>;
+  joinCampaign: (campaignId: string, creator: CreatorProfile) => Promise<CampaignParticipant>;
   submitXPost: (campaignId: string, creator: CreatorProfile, postUrl: string) => Promise<Submission>;
   syncSubmissionMetrics: (submissionId: string) => Promise<Submission>;
-  updateRewardStatus: (rewardId: string, status: RewardStatus, txRef?: string) => void;
-  markNotificationRead: (notifId: string) => void;
+  updateRewardStatus: (rewardId: string, status: RewardStatus, txRef?: string) => Promise<void>;
+  markNotificationRead: (notifId: string) => Promise<void>;
   resetToDefaults: () => void;
 }
 
@@ -55,6 +56,7 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [version, setVersion] = useState(0);
+  const [isReady, setIsReady] = useState(false);
   const [theme, setThemeState] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('ethio_theme');
@@ -65,6 +67,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     return 'dark';
   });
+
+  // Initialize storage on mount
+  useEffect(() => {
+    appStorage.initialize().then(() => {
+      setIsReady(true);
+      setVersion((v) => v + 1);
+    });
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -82,13 +92,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [theme]);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setThemeState((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
+  }, []);
 
-  const setTheme = (newTheme: 'dark' | 'light') => {
+  const setTheme = useCallback((newTheme: 'dark' | 'light') => {
     setThemeState(newTheme);
-  };
+  }, []);
 
   useEffect(() => {
     const unsubscribe = appStorage.subscribe(() => {
@@ -135,12 +145,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     activeCreatorProfile,
     activeProjectProfile,
     theme,
+    isReady,
     toggleTheme,
     setTheme,
 
     switchUser: (userId) => appStorage.switchUser(userId),
     login: (email) => appStorage.login(email),
-    register: (name, email, cat, role) => appStorage.registerUser(name, email, cat, role),
+    register: (name, email, cat, role) => appStorage.register(name, email, cat, role),
     logout: () => appStorage.logout(),
     applyAsCreator: (data) => appStorage.applyAsCreator(data),
     updateCreatorStatus: (creatorId, status, notes) => appStorage.updateCreatorStatus(creatorId, status, notes),

@@ -56,11 +56,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setSuccessMessage(null);
   }, [initialMode, isOpen]);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
-      login(loginEmail.trim());
+      await login(loginEmail.trim());
       onClose();
       if (onSuccess) onSuccess();
     } catch (err: unknown) {
@@ -69,9 +69,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  const handleQuickLogin = (email: string) => {
+  const handleQuickLogin = async (email: string) => {
     try {
-      login(email);
+      await login(email);
       onClose();
       if (onSuccess) onSuccess();
     } catch (err: unknown) {
@@ -80,11 +80,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  const handleUserRegister = (e: React.FormEvent) => {
+  const handleUserRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
-      register(regName, regEmail, regCategory, 'USER');
+      await register(regName, regEmail, regCategory, 'USER');
       setSuccessMessage('Account registered successfully!');
       setTimeout(() => {
         onClose();
@@ -96,14 +96,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  const handleCreatorApplication = (e: React.FormEvent) => {
+  const handleCreatorApplication = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
       const email = `${cUsername.toLowerCase().replace(/[^a-z0-9]/g, '')}@creator.local`;
-      const newUser = register(cDisplayName, email, 'Creator', 'CREATOR');
+      const newUser = await register(cDisplayName, email, 'Creator', 'CREATOR');
 
-      applyAsCreator({
+      await applyAsCreator({
         userId: newUser.id,
         displayName: cDisplayName,
         username: cUsername.replace('@', ''),
@@ -140,13 +140,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  const handleProjectApplication = (e: React.FormEvent) => {
+  const handleProjectApplication = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
-      const newUser = register(pName, pEmail, 'Project / Company', 'PROJECT');
+      const newUser = await register(pName, pEmail, 'Project / Company', 'PROJECT');
 
-      applyAsProject({
+      await applyAsProject({
         userId: newUser.id,
         name: pName,
         logoUrl: `https://images.unsplash.com/photo-1622979135225-d2ba269bc1df?w=150`,
@@ -183,7 +183,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     login: 'Select a demo persona below or sign in with your email.',
     'register-creator': 'Get verified to join sponsored campaigns and earn rewards.',
     'register-project': 'Launch campaigns and reward verified Ethiopian community creators.',
-    'register-user': 'Join Ethiopia’s fastest-growing blockchain builder & enthusiast network.',
+    'register-user': 'Join Ethiopia\'s fastest-growing blockchain builder & enthusiast network.',
   };
 
   return (

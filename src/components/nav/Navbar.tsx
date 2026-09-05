@@ -27,12 +27,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenA
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const navLinks = [
-    { id: 'home', label: 'Overview' },
     { id: 'campaigns', label: 'Campaigns' },
     { id: 'creators', label: 'Creators' },
-    { id: 'for-projects', label: 'For Projects' },
-    { id: 'community', label: 'Telegram Hub' },
-    { id: 'about', label: 'About & Escrow' },
+    { id: 'community', label: 'Community' },
   ];
 
   const handleNavClick = (viewId: string) => {

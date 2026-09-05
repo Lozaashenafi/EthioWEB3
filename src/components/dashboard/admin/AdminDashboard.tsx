@@ -7,10 +7,12 @@ import {
   ExternalLink,
   RefreshCw,
   RotateCcw,
+  Users,
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const {
+    users,
     creators,
     projects,
     campaigns,
@@ -25,7 +27,7 @@ export const AdminDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'creators' | 'projects' | 'campaigns' | 'submissions' | 'rewards'
+    'overview' | 'users' | 'creators' | 'projects' | 'campaigns' | 'submissions' | 'rewards'
   >('overview');
   const [syncingId, setSyncingId] = useState<string | null>(null);
 
@@ -45,6 +47,16 @@ export const AdminDashboard: React.FC = () => {
     } finally {
       setSyncingId(null);
     }
+  };
+
+  const roleBadge = (role: string) => {
+    const variants: Record<string, 'green' | 'forest' | 'gold' | 'default'> = {
+      ADMIN: 'gold',
+      CREATOR: 'green',
+      PROJECT: 'forest',
+      USER: 'default',
+    };
+    return <Badge variant={variants[role] || 'default'} size="sm">{role}</Badge>;
   };
 
   return (
@@ -83,11 +95,12 @@ export const AdminDashboard: React.FC = () => {
       <div className="flex border-b dark:border-[#30363D] border-slate-200 gap-1 text-xs font-semibold overflow-x-auto">
         {[
           { id: 'overview', label: 'Overview' },
-          { id: 'creators', label: `Creator Review (${pendingCreators.length} pending)` },
-          { id: 'projects', label: `Project Requests (${pendingProjects.length} pending)` },
+          { id: 'users', label: `Members (${users.length})` },
+          { id: 'creators', label: `Creators (${pendingCreators.length} pending)` },
+          { id: 'projects', label: `Projects (${pendingProjects.length} pending)` },
           { id: 'campaigns', label: `Campaigns (${pendingCampaigns.length} review)` },
-          { id: 'submissions', label: `Submissions & Sync (${submissions.length})` },
-          { id: 'rewards', label: `Rewards & Payouts (${rewards.length})` },
+          { id: 'submissions', label: `Submissions (${submissions.length})` },
+          { id: 'rewards', label: `Rewards (${rewards.length})` },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -106,9 +119,15 @@ export const AdminDashboard: React.FC = () => {
       {/* OVERVIEW TAB */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="rounded-xl border dark:border-[#30363D] dark:bg-[#161B22] bg-white border-slate-200 p-4 shadow-xs">
-              <span className="text-xs dark:text-slate-400 text-slate-500 font-medium">Pending Creator Approvals</span>
+              <span className="text-xs dark:text-slate-400 text-slate-500 font-medium">Total Members</span>
+              <div className="text-xl font-bold dark:text-white text-slate-900 mt-1">
+                {users.length}
+              </div>
+            </div>
+            <div className="rounded-xl border dark:border-[#30363D] dark:bg-[#161B22] bg-white border-slate-200 p-4 shadow-xs">
+              <span className="text-xs dark:text-slate-400 text-slate-500 font-medium">Pending Creators</span>
               <div className="text-xl font-bold dark:text-white text-slate-900 mt-1">
                 {pendingCreators.length}
               </div>
@@ -120,13 +139,13 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </div>
             <div className="rounded-xl border dark:border-[#30363D] dark:bg-[#161B22] bg-white border-slate-200 p-4 shadow-xs">
-              <span className="text-xs dark:text-slate-400 text-slate-500 font-medium">Total X Submissions</span>
+              <span className="text-xs dark:text-slate-400 text-slate-500 font-medium">Submissions</span>
               <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 font-mono mt-1">
                 {submissions.length}
               </div>
             </div>
             <div className="rounded-xl border dark:border-[#30363D] dark:bg-[#161B22] bg-white border-slate-200 p-4 shadow-xs">
-              <span className="text-xs dark:text-slate-400 text-slate-500 font-medium">Total Rewards Allocated</span>
+              <span className="text-xs dark:text-slate-400 text-slate-500 font-medium">Total Payouts</span>
               <div className="text-xl font-bold dark:text-white text-slate-900 font-mono mt-1">
                 ${rewards.reduce((s, r) => s + r.amount, 0).toLocaleString()}
               </div>
@@ -178,6 +197,55 @@ export const AdminDashboard: React.FC = () => {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* MEMBERS TAB */}
+      {activeTab === 'users' && (
+        <div className="rounded-xl border dark:border-[#30363D] dark:bg-[#161B22] bg-white border-slate-200 p-5 space-y-4 shadow-xs">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-emerald-500" />
+              <h2 className="text-base font-semibold dark:text-white text-slate-900">All Registered Members</h2>
+            </div>
+            <span className="text-xs dark:text-slate-400 text-slate-500">{users.length} total users</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b dark:border-[#30363D] border-slate-200">
+                  <th className="text-left py-2 px-3 font-semibold dark:text-slate-400 text-slate-500">User</th>
+                  <th className="text-left py-2 px-3 font-semibold dark:text-slate-400 text-slate-500">Email</th>
+                  <th className="text-left py-2 px-3 font-semibold dark:text-slate-400 text-slate-500">Role</th>
+                  <th className="text-left py-2 px-3 font-semibold dark:text-slate-400 text-slate-500">Category</th>
+                  <th className="text-left py-2 px-3 font-semibold dark:text-slate-400 text-slate-500">Joined</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y dark:divide-[#30363D] divide-slate-100">
+                {users.map((u) => (
+                  <tr key={u.id} className="dark:hover:bg-[#21262D] hover:bg-slate-50 transition-colors">
+                    <td className="py-2.5 px-3">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={u.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'}
+                          alt={u.name}
+                          className="w-7 h-7 rounded-full object-cover border dark:border-[#30363D] border-slate-300"
+                        />
+                        <span className="font-semibold dark:text-white text-slate-900">{u.name}</span>
+                      </div>
+                    </td>
+                    <td className="py-2.5 px-3 dark:text-slate-400 text-slate-600 font-mono">{u.email}</td>
+                    <td className="py-2.5 px-3">{roleBadge(u.role)}</td>
+                    <td className="py-2.5 px-3 dark:text-slate-300 text-slate-600">{u.category}</td>
+                    <td className="py-2.5 px-3 dark:text-slate-500 text-slate-400 font-mono">
+                      {new Date(u.createdAt).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

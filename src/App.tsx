@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
-import { DemoSwitcher } from './components/nav/DemoSwitcher';
 import { Navbar } from './components/nav/Navbar';
 import { AuthModal } from './components/auth/AuthModal';
 import { BackgroundPattern } from './components/ui/BackgroundPattern';
@@ -49,9 +48,6 @@ function AppContent() {
     >
       {/* Background Architectural Vector Motion */}
       <BackgroundPattern />
-
-      {/* Top Demo Persona Switcher */}
-      <DemoSwitcher />
 
       {/* Main Responsive Navigation Bar */}
       <Navbar
